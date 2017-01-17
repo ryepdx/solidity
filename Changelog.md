@@ -16,6 +16,7 @@ Bugfixes:
  * Type system: Fix a crash related to invalid binary operators.
  * Type system: Disallow ``var`` declaration with empty tuple type.
  * Type system: Correctly convert function argument types to pointers for member functions.
+ * Gas-estimator: reflect the most recent fee schedule.
  * Inline assembly: Charge one stack slot for non-value types during analysis.
  * Assembly output: Print source location before the operation it refers to instead of after.
 
