@@ -869,6 +869,7 @@ Pseudocode::
     desugar item: AST -> AST =
     match item {
     AssemblyFunctionDefinition('function' name '(' arg1, ..., argn ')' '->' ( '(' ret1, ..., retm ')' body) ->
+      jump($after_<name>)
       <name>:
       {
         $<name>_start [$retPC, $argn, ..., arg1]:
@@ -877,6 +878,7 @@ Pseudocode::
         swap and pop items so that only ret1, ... retn, $retPC are left on the stack
         jump 
       }
+      $after_<name>:
     AssemblyFor('for' { init } condition post body) ->
       {
         init // cannot be its own block because we want variable scope to extend into the body
@@ -922,7 +924,7 @@ Pseudocode::
         if identifier is function <name> with n args and m ret values ->
           {
             // find I such that $funcallI_* does not exist
-            $funcallI_return argn  ... arg2 arg1 jump(<name>)
+            $funcallI_return desugar(argn)  ... desugar(arg2) desugar(arg1) jump(<name>)
             if the current context is `let (id1, ..., idm) := f(...)` ->
               $funcallI_return [id1, ..., idm]:
             else ->
@@ -933,7 +935,9 @@ Pseudocode::
         else -> desugar(children of node)
       }
     default node ->
-      desugar(children of node)
+      desugar(children of node), exploding functional notation into statement
+      notation whenever desugaring turned a functional expression into a
+      list of statements
     }
 
 Opcode Stream Generation
