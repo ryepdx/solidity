@@ -2148,6 +2148,22 @@ BOOST_AUTO_TEST_CASE(assigning_state_to_const_variable)
 	CHECK_ERROR(text, TypeError, "Initial value for constant variable has to be compile-time constant.");
 }
 
+BOOST_AUTO_TEST_CASE(constant_string_literal_disallows_assignment)
+{
+	char const* text = R"(
+		contract Test {
+			string constant x = "abefghijklmnopqabcdefghijklmnopqabcdefghijklmnopqabca";
+			function f() {
+				x[0] = "f";
+			}
+		}
+	)";
+
+	// Even if this is made possible in the future, we should not allow assignment
+	// to elements of constant arrays.
+	CHECK_ERROR(text, TypeError, "Index access for string is not possible.");
+}
+
 BOOST_AUTO_TEST_CASE(assign_constant_function_value_to_constant)
 {
 	char const* text = R"(
@@ -2196,7 +2212,7 @@ BOOST_AUTO_TEST_CASE(assignment_to_const_array_vars)
 			uint[3] constant x = [uint(1), 2, 3];
 		}
 	)";
-	CHECK_SUCCESS(text);
+	CHECK_ERROR(text, TypeError, "implemented");
 }
 
 BOOST_AUTO_TEST_CASE(constant_struct)
@@ -2207,7 +2223,7 @@ BOOST_AUTO_TEST_CASE(constant_struct)
 			S constant x = S(5, new uint[](4));
 		}
 	)";
-	CHECK_SUCCESS(text);
+	CHECK_ERROR(text, TypeError, "implemented");
 }
 
 BOOST_AUTO_TEST_CASE(uninitialized_const_variable)
